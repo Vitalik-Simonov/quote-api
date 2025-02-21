@@ -34,6 +34,8 @@
 
                 // Отправляем JSON ответ
                 document.body.textContent = JSON.stringify(jsonResponse);
+
+                // Останавливаем дальнейшую обработку HTML
                 return true;
             }
             return false;

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Quote API</title>
+</head>
+<body>
+    <h1>Случайная цитата</h1>
+    <div id="quote"></div>
+
+    <script>
+        // Создаем простое API для получения случайной цитаты
+        async function getRandomQuote() {
+            try {
+                // Читаем содержимое файла quotes.txt
+                const response = await fetch('quotes.txt');
+                if (!response.ok) {
+                    throw new Error(`Ошибка HTTP! Код состояния: ${response.status}`);
+                }
+                const data = await response.text();
+
+                // Разделяем строки файла на массив
+                const quotesArray = data.split('\n').map(quote => quote.trim()).filter(quote => quote !== '');
+
+                // Выбираем случайную цитату
+                const randomIndex = Math.floor(Math.random() * quotesArray.length);
+                const randomQuote = quotesArray[randomIndex];
+
+                return randomQuote;
+            } catch (error) {
+                console.error('Ошибка при получении цитаты:', error);
+                return 'Ошибка при загрузке цитат.';
+            }
+        }
+
+        // Обрабатываем запрос к API
+        async function handleApiRequest() {
+            const randomQuote = await getRandomQuote();
+            document.getElementById('quote').textContent = randomQuote;
+
+            // Если это API, то можно отправить ответ через JSON
+            return randomQuote;
+        }
+
+        // При загрузке страницы показываем случайную цитату
+        window.addEventListener('load', () => {
+            handleApiRequest();
+        });
+
+        // Добавляем возможность получить цитату через URL /api/quote
+        if (window.location.pathname === '/api/quote') {
+            getRandomQuote().then(quote => {
+                const jsonResponse = { quote };
+                document.body.textContent = JSON.stringify(jsonResponse);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -25,16 +25,24 @@
             return quotes[randomIndex];
         }
 
-        // Отображение случайной цитаты на странице
-        document.getElementById('quote').textContent = getRandomQuote();
+        // Проверка параметров URL для имитации API
+        function handleApiRequest() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('action') && params.get('action') === 'getQuote') {
+                const randomQuote = getRandomQuote();
+                const jsonResponse = { quote: randomQuote };
 
-        // Обработка запроса к "API"
-        if (window.location.pathname === '/api/quote') {
-            const randomQuote = getRandomQuote();
-            const jsonResponse = { quote: randomQuote };
+                // Отправляем JSON ответ
+                document.body.textContent = JSON.stringify(jsonResponse);
+                return true;
+            }
+            return false;
+        }
 
-            // Отправляем JSON ответ
-            document.body.textContent = JSON.stringify(jsonResponse);
+        // Инициализация страницы
+        if (!handleApiRequest()) {
+            // Если это обычный запрос, показываем случайную цитату на странице
+            document.getElementById('quote').textContent = getRandomQuote();
         }
     </script>
 </body>
